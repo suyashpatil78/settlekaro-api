@@ -3,6 +3,7 @@ from flask import Flask
 from flask_smorest import Api
 from api.signup import signupBlp
 from api.login import loginBlp
+from api.users import usersBlp
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 
@@ -29,5 +30,6 @@ def create_app():
 
     api.register_blueprint(signupBlp)
     api.register_blueprint(loginBlp)
+    api.register_blueprint(usersBlp)
 
     return app

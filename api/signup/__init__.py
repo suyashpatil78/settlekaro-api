@@ -22,6 +22,7 @@ class Signup(MethodView):
     def post(self, args):
         id = assign_user_id()
         password = hash_password(args['password'])
+        username = args['username']
 
         # if username already exists
         if UserModel.query.filter_by(username=args['username']).first() is not None:
@@ -36,7 +37,7 @@ class Signup(MethodView):
         db.session.add(user)
         db.session.commit()
 
-        access_token = create_access_token(identity=id)
+        access_token = create_access_token(identity=username)
 
         return jsonify({"acess_token": access_token}), 201
 

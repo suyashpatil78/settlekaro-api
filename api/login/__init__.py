@@ -24,7 +24,7 @@ class Login(MethodView):
         if not check_password_hash(user.password, password):
             return jsonify({'message': 'invalid password'}), 400
 
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=user.username)
 
         return jsonify({"access_token": access_token}), 200
 
