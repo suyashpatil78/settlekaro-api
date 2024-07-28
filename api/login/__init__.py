@@ -5,7 +5,7 @@ from api.login.schema import LoginSchema
 from werkzeug.security import check_password_hash
 from db.models.users import UserModel
 from db import db
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token
 
 loginBlp = Blueprint("login", __name__)
 
@@ -25,7 +25,16 @@ class Login(MethodView):
             return jsonify({'message': 'invalid password'}), 400
 
         access_token = create_access_token(identity=user.username)
+        refresh_token = create_refresh_token(identity=user.username)
 
-        return jsonify({"access_token": access_token}), 200
+        return jsonify({"access_token": access_token, "refresh_token": refresh_token}), 200
 
+@loginBlp.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+class Refresh(MethodView):
+    def post(self, args):
+        identity = get_jwt_identity()
+        access_token = create_access_token(identity=identity)
+        refresh_token = args['refresh_token']
 
+        return jsonify({"access_token": access_token, "refresh_token": refresh_token}), 200
