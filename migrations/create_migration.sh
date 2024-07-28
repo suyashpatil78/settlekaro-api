@@ -2,7 +2,7 @@ MIGRATIONS_DIR="."
 SQL_DIR="$MIGRATIONS_DIR/sql"
 VERSIONS_DIR="$MIGRATIONS_DIR/versions"
 
-latest_major_version=$(ls "$SQL_DIR" | grep -E '^[0-9]+\.sql$' | cut -d'_' -f1 | sort -nr | head -n 1)
+latest_major_version=$(ls "$SQL_DIR" | grep -E '^[0-9]+\.sql$' | cut -d'.' -f1 | sort -nr | head -n 1)
 
 next_major_version=$(expr $latest_major_version + 1)
 
