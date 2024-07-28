@@ -2,11 +2,39 @@ from flask import jsonify, request
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from api.signup.schema import SignupSchema
+import utils.helpers as helpers
+from werkzeug.security import generate_password_hash, check_password_hash
+from db.models.users import UserModel
+from db import db
 
 signupBlp = Blueprint("signup", __name__)
+
+def assign_user_id() -> str:
+    return 'us{0}'.format(helpers.generate_random_string(string_length=10))
+
+def hash_password(password) -> str:
+    return generate_password_hash(password)
 
 @signupBlp.route('/signup', methods=['POST'])
 class Signup(MethodView):
     @signupBlp.arguments(SignupSchema, location='json')
     def post(self, args):
-        return jsonify(request.get_json())
+        id = assign_user_id()
+        password = hash_password(args['password'])
+
+        # if username already exists
+        if UserModel.query.filter_by(username=args['username']).first() is not None:
+            return jsonify({'message': 'username already exists'}), 400
+
+        # if email already exists
+        if UserModel.query.filter_by(email=args['email']).first() is not None:
+            return jsonify({'message': 'email already exists'}), 400
+
+        user = UserModel(id=id, username=args['username'], email=args['email'], password=password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        return jsonify({'message': 'user created'}), 201
+
+
