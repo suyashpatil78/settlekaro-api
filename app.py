@@ -2,6 +2,9 @@ import os
 from flask import Flask
 from flask_smorest import Api
 from api.signup import signupBlp
+from api.login import loginBlp
+from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
 
 from db import db
 from db.models.users import UserModel
@@ -14,14 +17,17 @@ def create_app():
     app.config["API_VERSION"] = "v1"
     app.config["OPENAPI_VERSION"]="3.0.2"
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URI")
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 
     db.init_app(app)
 
-    with app.app_context():
-        db.create_all()
+    migrate = Migrate(app, db)
+
+    jwt = JWTManager(app)
 
     api = Api(app)
 
     api.register_blueprint(signupBlp)
+    api.register_blueprint(loginBlp)
 
     return app
