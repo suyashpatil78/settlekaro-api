@@ -6,7 +6,7 @@ import utils.helpers as helpers
 from werkzeug.security import generate_password_hash, check_password_hash
 from db.models.users import UserModel
 from db import db
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token
 
 signupBlp = Blueprint("signup", __name__)
 
@@ -38,7 +38,8 @@ class Signup(MethodView):
         db.session.commit()
 
         access_token = create_access_token(identity=username)
+        refresh_token = create_refresh_token(identity=username)
 
-        return jsonify({"acess_token": access_token}), 201
+        return jsonify({"acess_token": access_token, "refresh_token": refresh_token}), 201
 
 

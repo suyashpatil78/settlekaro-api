@@ -6,6 +6,7 @@ from api.login import loginBlp
 from api.users import usersBlp
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
+from dotenv import load_dotenv
 
 from db import db
 from db.models.users import UserModel
@@ -13,6 +14,7 @@ from db.models.expenses import ExpenseModel
 
 def create_app():
     app = Flask(__name__)
+    load_dotenv()
 
     app.config["API_TITLE"] = "My API"
     app.config["API_VERSION"] = "v1"
