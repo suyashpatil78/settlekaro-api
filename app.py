@@ -22,6 +22,7 @@ def create_app():
     app.config["OPENAPI_VERSION"]="3.0.2"
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URI")
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 60 * 60 * 2
 
     db.init_app(app)
 
