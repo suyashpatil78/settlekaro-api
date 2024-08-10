@@ -106,3 +106,22 @@ class UnsettledExpenses(MethodView):
                     unsettled_expenses.append(expense)
 
         return unsettled_expenses
+
+@expensesBlp.route("/expenses/settle", methods=["PUT"])
+class SettleExpense(MethodView):
+    @jwt_required()
+    @expensesBlp.response(200, ExpensesSchema)
+    @expensesBlp.arguments(ExpensesSchema, location='json')
+    def put(self, args, expense_id, user_id):
+        expense = ExpenseModel.query.filter_by(id=expense_id).first()
+        expense_details = expense.expense_details
+
+        for expense_detail in expense_details:
+            if expense_detail['user_id'] == user_id:
+                expense_detail['settled'] = True
+
+        expense.expense_details = expense_details
+
+        db.session.commit()
+
+        return expense
