@@ -1,4 +1,5 @@
 # Settlekaro
+![hld-diagram-settlekaro](https://github.com/user-attachments/assets/e79b2368-4549-46c0-b106-ce6a99fe1616)
 
 ## Description
 An application for settling your bills amongst friends. Many a time you have to split and settle expenses. Settlekaro will help you do that.
