@@ -4,6 +4,7 @@ from flask_smorest import Api
 from api.signup import signupBlp
 from api.login import loginBlp
 from api.users import usersBlp
+from api.expenses import expensesBlp
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from dotenv import load_dotenv
@@ -33,5 +34,6 @@ def create_app():
     api.register_blueprint(signupBlp)
     api.register_blueprint(loginBlp)
     api.register_blueprint(usersBlp)
+    api.register_blueprint(expensesBlp)
 
     return app

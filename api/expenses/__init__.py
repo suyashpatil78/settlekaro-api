@@ -6,32 +6,33 @@ from api.expenses.schema import ExpensesSchema
 from db import db
 from flask_jwt_extended import jwt_required
 from utils import helpers
+from datetime import datetime
 
 expensesBlp = Blueprint("expenses", __name__)
 
 def assign_expense_id() -> str:
     return 'ex{0}'.format(helpers.generate_random_string(string_length=10))
 
-@expensesBlp.route("/expenses", method=["GET", "POST"])
+@expensesBlp.route("/expenses", methods=["GET", "POST"])
 class Expenses(MethodView):
     @jwt_required()
     @expensesBlp.response(200, ExpensesSchema(many=True))
-    def get(self, id):
-        if id is not None:
-            expense = ExpenseModel.query.filter_by(created_by=id).all()
-            return expense
+    def get(self):
         expenses = ExpenseModel.query.all()
         return expenses
     
     @jwt_required()
     @expensesBlp.response(201, ExpensesSchema)
+    @expensesBlp.arguments(ExpensesSchema, location='json')
     def post(self, args):
         id = assign_expense_id()
         created_by = args['created_by']
         amount = args['amount']
         expense_details = args['expense_details']
         
-        expense = ExpenseModel(id=id, created_by=created_by, amount=amount, expense_details=expense_details)
+        date = datetime.strptime(args['date'], '%Y-%m-%d')
+        
+        expense = ExpenseModel(id=id, created_by=created_by, amount=amount, expense_details=expense_details, date=date)
         
         db.session.add(expense)
 
@@ -43,14 +44,39 @@ class Expenses(MethodView):
         db.session.commit()
         
         return expense
-
+    
+@expensesBlp.route("/expenses/<string:id>", methods=["GET", "PUT", "DELETE"])
+class Expense(MethodView):
     @jwt_required()
     @expensesBlp.response(200, ExpensesSchema)
     def get(self, id):
         expense = ExpenseModel.query.filter_by(id=id).first()
         return expense
     
-@expensesBlp.route("/expenses/user", method=["GET"])
+    @jwt_required()
+    @expensesBlp.response(200, ExpensesSchema)
+    @expensesBlp.arguments(ExpensesSchema, location='json')
+    def put(self, args, id):
+        expense = ExpenseModel.query.filter_by(id=id).first()
+        
+        expense.created_by = args['created_by']
+        expense.amount = args['amount']
+        expense.expense_details = args['expense_details']
+        
+        db.session.commit()
+        
+        return expense
+    
+    @jwt_required()
+    @expensesBlp.response(204)
+    def delete(self, id):
+        expense = ExpenseModel.query.filter_by(id=id).first()
+        db.session.delete(expense)
+        db.session.commit()
+        return None
+
+
+@expensesBlp.route("/expenses/user", methods=["GET"])
 class UserExpenses(MethodView):
     @jwt_required()
     @expensesBlp.response(200, ExpensesSchema(many=True))
@@ -58,7 +84,7 @@ class UserExpenses(MethodView):
         expenses = ExpenseModel.query.filter_by(created_by=id).all()
         return expenses
     
-@expensesBlp.route("/expenses/unsettled", method=["GET"])
+@expensesBlp.route("/expenses/unsettled", methods=["GET"])
 class UnsettledExpenses(MethodView):
     @jwt_required()
     @expensesBlp.response(200, ExpensesSchema(many=True))

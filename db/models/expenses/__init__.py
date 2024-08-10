@@ -11,4 +11,4 @@ class ExpenseModel(db.Model):
     created_by: Mapped[str] = mapped_column(ForeignKey("users.id"))
     date: Mapped[datetime.date] = mapped_column(default=db.func.now())
     amount: Mapped[float] = mapped_column()
-    expense_details: Mapped[list[dict]] = mapped_column(ARRAY(JSON), default=[])
+    expense_details: Mapped[list[JSON]] = mapped_column(ARRAY(JSON), default=[])
