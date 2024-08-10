@@ -23,16 +23,17 @@ class Signup(MethodView):
         id = assign_user_id()
         password = hash_password(args['password'])
         username = args['username']
+        email = args['email']
 
         # if username already exists
-        if UserModel.query.filter_by(username=args['username']).first() is not None:
+        if UserModel.query.filter_by(username=username).first() is not None:
             return jsonify({'message': 'username already exists'}), 400
 
         # if email already exists
-        if UserModel.query.filter_by(email=args['email']).first() is not None:
+        if UserModel.query.filter_by(email=email).first() is not None:
             return jsonify({'message': 'email already exists'}), 400
 
-        user = UserModel(id=id, username=args['username'], email=args['email'], password=password)
+        user = UserModel(id=id, username=username, email=email, password=password)
 
         db.session.add(user)
         db.session.commit()
@@ -40,6 +41,6 @@ class Signup(MethodView):
         access_token = create_access_token(identity=username)
         refresh_token = create_refresh_token(identity=username)
 
-        return jsonify({"acess_token": access_token, "refresh_token": refresh_token}), 201
+        return jsonify({ "acess_token": access_token, "refresh_token": refresh_token, "email": email, "id": id, "username": username }), 201
 
 
