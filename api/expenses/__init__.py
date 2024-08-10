@@ -79,12 +79,12 @@ class Expense(MethodView):
         return None
 
 
-@expensesBlp.route("/expenses/user", methods=["GET"])
+@expensesBlp.route("/expenses/user/<string:user_id>", methods=["GET"])
 class UserExpenses(MethodView):
     @jwt_required()
     @expensesBlp.response(200, ExpensesSchema(many=True))
-    def get(self, id):
-        expenses = ExpenseModel.query.filter_by(created_by=id).all()
+    def get(self, user_id):
+        expenses = ExpenseModel.query.filter_by(created_by=user_id).all()
         return expenses
     
 @expensesBlp.route("/expenses/unsettled", methods=["GET"])
