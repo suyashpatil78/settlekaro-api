@@ -39,7 +39,10 @@ class Expenses(MethodView):
         # add the expense to all the user's expenses
         for expense_detail in expense_details:
             user = UserModel.query.filter_by(id=expense_detail['user_id']).first()
-            user.expenses.append(expense)
+            expense_id = expense.id
+            user_expenses = user.expenses if user.expenses else []
+            user_expenses.append(expense_id)
+            user.expenses = user_expenses
 
         db.session.commit()
         
