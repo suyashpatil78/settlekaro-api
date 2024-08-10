@@ -16,7 +16,7 @@ def assign_user_id() -> str:
 def hash_password(password) -> str:
     return generate_password_hash(password)
 
-@signupBlp.route('/signup', methods=['POST'])
+@signupBlp.route('/api/signup', methods=['POST'])
 class Signup(MethodView):
     @signupBlp.arguments(SignupSchema, location='json')
     def post(self, args):

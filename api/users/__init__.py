@@ -10,7 +10,7 @@ from sqlalchemy import func
 
 usersBlp = Blueprint("users", __name__)
 
-@usersBlp.route('/users', methods=['GET'])
+@usersBlp.route('/api/users', methods=['GET'])
 class Users(MethodView):
     @jwt_required()
     @usersBlp.response(200, UsersSchema(many=True))
@@ -19,7 +19,7 @@ class Users(MethodView):
         return users
     
 
-@usersBlp.route('/users/<string:id>', methods=['GET'])
+@usersBlp.route('/api/users/<string:id>', methods=['GET'])
 class User(MethodView):
     @jwt_required()
     @usersBlp.response(200, UsersSchema)
@@ -28,7 +28,7 @@ class User(MethodView):
         return user
     
 
-@usersBlp.route('/users/search/<string:username>', methods=['GET'])
+@usersBlp.route('/api/users/search/<string:username>', methods=['GET'])
 class SearchUser(MethodView):
     @jwt_required()
     @usersBlp.response(200, UsersSchema(many=True))

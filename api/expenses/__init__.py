@@ -13,7 +13,7 @@ expensesBlp = Blueprint("expenses", __name__)
 def assign_expense_id() -> str:
     return 'ex{0}'.format(helpers.generate_random_string(string_length=10))
 
-@expensesBlp.route("/expenses", methods=["GET", "POST"])
+@expensesBlp.route("/api/expenses", methods=["GET", "POST"])
 class Expenses(MethodView):
     @jwt_required()
     @expensesBlp.response(200, ExpensesSchema(many=True))
@@ -48,7 +48,7 @@ class Expenses(MethodView):
         
         return expense
     
-@expensesBlp.route("/expenses/<string:id>", methods=["GET", "PUT", "DELETE"])
+@expensesBlp.route("/api/expenses/<string:id>", methods=["GET", "PUT", "DELETE"])
 class Expense(MethodView):
     @jwt_required()
     @expensesBlp.response(200, ExpensesSchema)
@@ -79,7 +79,7 @@ class Expense(MethodView):
         return None
 
 
-@expensesBlp.route("/expenses/user/<string:user_id>", methods=["GET"])
+@expensesBlp.route("/api/expenses/user/<string:user_id>", methods=["GET"])
 class UserExpenses(MethodView):
     @jwt_required()
     @expensesBlp.response(200, ExpensesSchema(many=True))
@@ -87,7 +87,7 @@ class UserExpenses(MethodView):
         expenses = ExpenseModel.query.filter_by(created_by=user_id).all()
         return expenses
     
-@expensesBlp.route("/expenses/unsettled", methods=["GET"])
+@expensesBlp.route("/api/expenses/unsettled", methods=["GET"])
 class UnsettledExpenses(MethodView):
     @jwt_required()
     @expensesBlp.response(200, ExpensesSchema(many=True))
@@ -107,7 +107,7 @@ class UnsettledExpenses(MethodView):
 
         return unsettled_expenses
 
-@expensesBlp.route("/expenses/settle", methods=["PUT"])
+@expensesBlp.route("/api/expenses/settle", methods=["PUT"])
 class SettleExpense(MethodView):
     @jwt_required()
     @expensesBlp.response(200, ExpensesSchema)

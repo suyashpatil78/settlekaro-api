@@ -9,7 +9,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 
 loginBlp = Blueprint("login", __name__)
 
-@loginBlp.route('/login', methods=['POST'])
+@loginBlp.route('/api/login', methods=['POST'])
 class Login(MethodView):
     @loginBlp.arguments(LoginSchema, location='json')
     def post(self, args):
@@ -29,7 +29,7 @@ class Login(MethodView):
 
         return jsonify({"access_token": access_token, "refresh_token": refresh_token}), 200
 
-@loginBlp.route('/refresh', methods=['POST'])
+@loginBlp.route('/api/refresh_token', methods=['POST'])
 @jwt_required(refresh=True)
 class Refresh(MethodView):
     def post(self, args):
